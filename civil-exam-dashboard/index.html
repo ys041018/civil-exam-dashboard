@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="国考与江苏省考双线备考本地驾驶舱">
+  <title>双考备考驾驶舱</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="styles.css?v=7">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand-block">
+        <div class="brand-mark" aria-hidden="true">公</div>
+        <div>
+          <p class="eyebrow">江苏考生 · 国考 + 省考</p>
+          <h1>双考备考驾驶舱</h1>
+          <p class="brand-subtitle">把时间变成分数，把错题变成优势。</p>
+        </div>
+      </div>
+      <div class="topbar-side">
+        <div class="profile-chip">
+          <span class="profile-label">当前目标</span>
+          <strong id="header-target">行测 50 → 70</strong>
+          <span id="header-days">正在计算倒计时</span>
+        </div>
+        <div class="header-actions">
+          <button class="button button-ghost" type="button" data-action="export-data">导出数据</button>
+          <label class="button button-ghost file-button">
+            导入数据
+            <input id="header-import-file" type="file" accept="application/json,.json" hidden>
+          </label>
+        </div>
+      </div>
+    </header>
+
+    <nav class="tab-nav" aria-label="主导航" role="tablist">
+      <button class="tab-button is-active" type="button" role="tab" aria-selected="true" data-tab-target="overview">总览</button>
+      <button class="tab-button" type="button" role="tab" aria-selected="false" data-tab-target="methods">学习路线</button>
+      <button class="tab-button" type="button" role="tab" aria-selected="false" data-tab-target="plan">执行计划</button>
+      <button class="tab-button" type="button" role="tab" aria-selected="false" data-tab-target="mocks">套卷分析</button>
+      <button class="tab-button" type="button" role="tab" aria-selected="false" data-tab-target="errors">错题复盘</button>
+      <button class="tab-button" type="button" role="tab" aria-selected="false" data-tab-target="jobs">岗位准备</button>
+      <button class="tab-button" type="button" role="tab" aria-selected="false" data-tab-target="settings">设置</button>
+    </nav>
+
+    <main>
+      <section class="tab-panel is-active" id="tab-overview" data-tab-panel="overview" role="tabpanel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">今日作战台</p>
+            <h2>先看方向，再开始学习</h2>
+            <p>报名和笔试日期已确认；江苏省考报名截止日期待官方公布，如有变化请及时更新。</p>
+          </div>
+          <button class="button button-primary" type="button" data-tab-jump="plan">查看今天怎么学</button>
+        </div>
+
+        <div class="countdown-grid" id="countdown-grid"></div>
+        <section class="card registration-card">
+          <div class="card-heading">
+            <div>
+              <p class="eyebrow">关键节点</p>
+              <h3>报名与笔试时间线</h3>
+            </div>
+            <span class="helper-text">江苏省考报名截止日期待官方公布</span>
+          </div>
+          <div id="registration-timeline" class="registration-timeline"></div>
+        </section>
+        <div class="kpi-grid" id="overview-kpis"></div>
+
+        <div class="content-grid content-grid-two">
+          <section class="card">
+            <div class="card-heading">
+              <div>
+                <p class="eyebrow">执行闭环</p>
+                <h3>今日优先任务</h3>
+              </div>
+              <button class="text-button" type="button" data-tab-jump="plan">全部任务</button>
+            </div>
+            <div id="overview-today-list" class="compact-list"></div>
+          </section>
+
+          <section class="card accent-card">
+            <div class="card-heading">
+              <div>
+                <p class="eyebrow">提分优先级</p>
+                <h3>当前弱项</h3>
+              </div>
+            </div>
+            <div id="weakness-list" class="weakness-list"></div>
+          </section>
+        </div>
+
+        <section class="card">
+          <div class="card-heading">
+            <div>
+              <p class="eyebrow">行测仪表盘</p>
+              <h3>五个模块最新正确率</h3>
+            </div>
+            <span class="helper-text">没有套卷记录时不会生成虚假弱项</span>
+          </div>
+          <div id="module-overview" class="module-overview"></div>
+        </section>
+
+        <div class="content-grid content-grid-two">
+          <section class="card">
+            <div class="card-heading">
+              <div>
+                <p class="eyebrow">记忆曲线</p>
+                <h3>待复习错题</h3>
+              </div>
+              <button class="text-button" type="button" data-tab-jump="errors">进入错题本</button>
+            </div>
+            <div id="dashboard-errors" class="compact-list"></div>
+          </section>
+
+          <section class="card">
+            <div class="card-heading">
+              <div>
+                <p class="eyebrow">真实反馈</p>
+                <h3>最近套卷</h3>
+              </div>
+              <button class="text-button" type="button" data-tab-jump="mocks">录入套卷</button>
+            </div>
+            <div id="recent-mocks" class="compact-list"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="tab-methods" data-tab-panel="methods" role="tabpanel" hidden>
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">方法、题量与节奏</p>
+            <h2>每个模块应该怎么学</h2>
+            <p>先选固定老师和方法，再按阶段节奏推进。不要同时跟多位老师，也不要只听课不刷题。</p>
+          </div>
+        </div>
+
+        <section class="card target-card">
+          <div class="card-heading">
+            <div>
+              <p class="eyebrow">75 分怎么拆</p>
+              <h3>模块目标与当前差距</h3>
+            </div>
+            <span class="helper-text">录入选卷后自动计算差距</span>
+          </div>
+          <div id="target-breakdown" class="target-breakdown"></div>
+        </section>
+
+        <div class="content-grid content-grid-methods">
+          <aside class="side-stack">
+            <section class="card">
+              <div class="card-heading">
+                <div>
+                  <p class="eyebrow">学习路线</p>
+                  <h3>选择模块</h3>
+                </div>
+              </div>
+              <div id="route-selector" class="route-selector"></div>
+            </section>
+
+            <section class="card">
+              <div class="card-heading">
+                <div>
+                  <p class="eyebrow">快速反馈</p>
+                  <h3>记录专项训练</h3>
+                </div>
+              </div>
+              <form id="drill-form" class="form-stack compact-form">
+                <div class="form-row">
+                  <label class="field">
+                    <span>日期</span>
+                    <input name="date" type="date" required>
+                  </label>
+                  <label class="field">
+                    <span>模块</span>
+                    <select name="module" required>
+                      <option value="言语理解">言语理解</option>
+                      <option value="判断推理">判断推理</option>
+                      <option value="资料分析">资料分析</option>
+                      <option value="数量关系">数量关系</option>
+                      <option value="常识判断">常识判断</option>
+                      <option value="申论">申论</option>
+                    </select>
+                  </label>
+                </div>
+                <div class="form-row form-row-three">
+                  <label class="field"><span>题量</span><input name="total" type="number" min="1" max="500" required placeholder="30"></label>
+                  <label class="field"><span>正确数</span><input name="correct" type="number" min="0" max="500" required placeholder="21"></label>
+                  <label class="field"><span>用时（分钟）</span><input name="minutes" type="number" min="1" max="600" required placeholder="35"></label>
+                </div>
+                <label class="field"><span>备注</span><input name="notes" type="text" maxlength="100" placeholder="例如：资料分析第3组找数太慢"></label>
+                <button class="button button-primary" type="submit">保存专项记录</button>
+              </form>
+              <div id="drill-stats" class="drill-stats"></div>
+              <div id="recent-drills" class="recent-drills"></div>
+            </section>
+          </aside>
+
+          <section class="card route-detail-card" id="route-detail"></section>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="tab-plan" data-tab-panel="plan" role="tabpanel" hidden>
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">阶段推进</p>
+            <h2>双考备考时间线</h2>
+            <p>国考前保持江苏真题训练，国考后迅速转入江苏专项，避免临阵换线。</p>
+          </div>
+          <div class="inline-actions">
+            <label class="field field-inline">
+              <span>查看日期</span>
+              <input id="plan-date" type="date">
+            </label>
+            <button class="button button-ghost" id="plan-today-button" type="button">回到今天</button>
+            <button class="button button-ghost" type="button" data-print-target="plan">打印今日计划</button>
+          </div>
+        </div>
+
+        <div class="phase-timeline" id="phase-timeline"></div>
+
+        <div class="content-grid content-grid-plan">
+          <section class="card plan-card">
+            <div class="card-heading">
+              <div>
+                <p class="eyebrow">当日执行</p>
+                <h3 id="daily-plan-title">今日计划</h3>
+              </div>
+              <div class="progress-pill" id="daily-plan-progress">0%</div>
+            </div>
+            <div class="progress-track"><div class="progress-fill" id="daily-plan-progress-bar"></div></div>
+            <div id="daily-plan-list" class="task-list"></div>
+          </section>
+
+          <aside class="side-stack">
+            <section class="card timer-card">
+              <div class="card-heading">
+                <div>
+                  <p class="eyebrow">专注执行</p>
+                  <h3>计时器</h3>
+                </div>
+                <span class="badge badge-primary" id="timer-session-count">今日 0 次</span>
+              </div>
+              <div class="timer-display" id="focus-timer">25:00</div>
+              <div class="timer-presets">
+                <button class="timer-preset is-active" type="button" data-timer-minutes="25">25 分钟</button>
+                <button class="timer-preset" type="button" data-timer-minutes="45">45 分钟</button>
+                <button class="timer-preset" type="button" data-timer-minutes="60">60 分钟</button>
+              </div>
+              <div class="timer-actions">
+                <button class="button button-primary" id="timer-toggle" type="button">开始专注</button>
+                <button class="button button-ghost" id="timer-reset" type="button">重置</button>
+              </div>
+              <p class="form-hint" id="timer-note">开始后建议不看手机，结束后再记录训练结果。</p>
+            </section>
+
+            <section class="card">
+              <div class="card-heading">
+                <div>
+                  <p class="eyebrow">临时补充</p>
+                  <h3>添加自定义任务</h3>
+                </div>
+              </div>
+              <form id="custom-task-form" class="form-stack compact-form">
+                <label class="field">
+                  <span>任务名称</span>
+                  <input name="title" type="text" maxlength="80" required placeholder="例如：复盘一套江苏判断推理">
+                </label>
+                <div class="form-row">
+                  <label class="field">
+                    <span>日期</span>
+                    <input name="date" type="date" required>
+                  </label>
+                  <label class="field">
+                    <span>预计分钟</span>
+                    <input name="minutes" type="number" min="5" max="600" step="5" value="60" required>
+                  </label>
+                </div>
+                <label class="field">
+                  <span>备注</span>
+                  <input name="detail" type="text" maxlength="120" placeholder="可留空">
+                </label>
+                <button class="button button-primary" type="submit">加入当天计划</button>
+              </form>
+            </section>
+
+            <section class="card">
+              <div class="card-heading">
+                <div>
+                  <p class="eyebrow">执行模板</p>
+                  <h3>每周节奏</h3>
+                </div>
+              </div>
+              <div id="weekly-template" class="weekly-template"></div>
+            </section>
+          </aside>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="tab-mocks" data-tab-panel="mocks" role="tabpanel" hidden>
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">用结果校准计划</p>
+            <h2>套卷与模块分析</h2>
+            <p>只有真实套卷数据足够时，系统才会判断你的弱项和提分顺序。</p>
+          </div>
+        </div>
+
+        <div class="content-grid content-grid-analysis">
+          <section class="card">
+            <div class="card-heading">
+              <div>
+                <p class="eyebrow">新增记录</p>
+                <h3>录入一次套卷</h3>
+              </div>
+            </div>
+            <form id="mock-form" class="form-stack">
+              <div class="form-row form-row-three">
+                <label class="field">
+                  <span>考试日期</span>
+                  <input name="date" type="date" required>
+                </label>
+                <label class="field">
+                  <span>考试类型</span>
+                  <select name="type" required>
+                    <option value="国考真题">国考真题</option>
+                    <option value="江苏省考真题">江苏省考真题</option>
+                    <option value="模考">模考</option>
+                    <option value="专项测试">专项测试</option>
+                    <option value="其他">其他</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>行测得分</span>
+                  <input name="xingceScore" type="number" min="0" max="100" step="0.1" required placeholder="0-100">
+                </label>
+              </div>
+              <div class="form-row form-row-three">
+                <label class="field">
+                  <span>申论得分</span>
+                  <input name="shenlunScore" type="number" min="0" max="100" step="0.1" placeholder="可留空">
+                </label>
+                <label class="field">
+                  <span>用时（分钟）</span>
+                  <input name="durationMinutes" type="number" min="1" max="600" step="1" required value="120">
+                </label>
+                <label class="field">
+                  <span>备注</span>
+                  <input name="notes" type="text" maxlength="120" placeholder="例如：江苏卷判断推理偏慢">
+                </label>
+              </div>
+              <div class="module-input-grid">
+                <label class="field"><span>言语理解正确率</span><input name="module-verbal" data-module="言语理解" type="number" min="0" max="100" step="1" placeholder="--"></label>
+                <label class="field"><span>判断推理正确率</span><input name="module-judgment" data-module="判断推理" type="number" min="0" max="100" step="1" placeholder="--"></label>
+                <label class="field"><span>数量关系正确率</span><input name="module-quantity" data-module="数量关系" type="number" min="0" max="100" step="1" placeholder="--"></label>
+                <label class="field"><span>资料分析正确率</span><input name="module-data" data-module="资料分析" type="number" min="0" max="100" step="1" placeholder="--"></label>
+                <label class="field"><span>常识判断正确率</span><input name="module-knowledge" data-module="常识判断" type="number" min="0" max="100" step="1" placeholder="--"></label>
+              </div>
+              <p class="form-hint">模块正确率可以暂时留空；有数据后系统才会生成模块弱项分析。</p>
+              <button class="button button-primary" type="submit">保存套卷记录</button>
+            </form>
+          </section>
+
+          <section class="card chart-card">
+            <div class="card-heading">
+              <div>
+                <p class="eyebrow">趋势</p>
+                <h3>行测得分变化</h3>
+              </div>
+              <span class="helper-text">最近 12 次</span>
+            </div>
+            <div class="chart-wrap">
+              <canvas id="score-chart" aria-label="行测得分趋势图"></canvas>
+              <div class="empty-state" id="score-chart-empty">录入至少两次套卷后显示趋势。</div>
+            </div>
+          </section>
+        </div>
+
+        <section class="card">
+          <div class="card-heading">
+            <div>
+              <p class="eyebrow">模块诊断</p>
+              <h3>最新套卷正确率</h3>
+            </div>
+            <span class="helper-text" id="mock-latest-label">暂无记录</span>
+          </div>
+          <div id="module-bars" class="module-bars"></div>
+        </section>
+
+        <section class="card">
+          <div class="card-heading">
+            <div>
+              <p class="eyebrow">历史记录</p>
+              <h3>套卷列表</h3>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>日期</th>
+                  <th>类型</th>
+                  <th>行测</th>
+                  <th>申论</th>
+                  <th>用时</th>
+                  <th>备注</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="mock-table-body"></tbody>
+            </table>
+          </div>
+          <div class="empty-state" id="mock-table-empty">还没有套卷记录。</div>
+        </section>
+      </section>
+
+      <section class="tab-panel" id="tab-errors" data-tab-panel="errors" role="tabpanel" hidden>
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">错题不是收藏，是复习任务</p>
+            <h2>错题复盘与间隔复习</h2>
+            <p>标记已复习后，系统会按 2、4、7、14、30 天安排下一次复习。</p>
+          </div>
+          <button class="button button-ghost" type="button" data-print-target="errors">打印复习清单</button>
+        </div>
+
+        <div class="content-grid content-grid-errors">
+          <section class="card">
+            <div class="card-heading">
+              <div>
+                <p class="eyebrow">新增错题</p>
+                <h3>记录错因，不只抄题</h3>
+              </div>
+            </div>
+            <form id="error-form" class="form-stack">
+              <div class="form-row form-row-three">
+                <label class="field"><span>日期</span><input name="date" type="date" required></label>
+                <label class="field">
+                  <span>模块</span>
+                  <select name="module" required>
+                    <option value="言语理解">言语理解</option>
+                    <option value="判断推理">判断推理</option>
+                    <option value="数量关系">数量关系</option>
+                    <option value="资料分析">资料分析</option>
+                    <option value="常识判断">常识判断</option>
+                    <option value="申论">申论</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>主要错因</span>
+                  <select name="cause" required>
+                    <option value="不会">不会</option>
+                    <option value="太慢">太慢</option>
+                    <option value="粗心">粗心</option>
+                    <option value="蒙对">蒙对</option>
+                    <option value="方法不熟">方法不熟</option>
+                  </select>
+                </label>
+              </div>
+              <label class="field"><span>题目摘要</span><input name="summary" type="text" maxlength="120" required placeholder="例如：增长率比较，计算时间过长"></label>
+              <div class="form-row form-row-three">
+                <label class="field"><span>知识点</span><input name="knowledgePoint" type="text" maxlength="80" placeholder="例如：基期比重"></label>
+                <label class="field"><span>下次复习</span><input name="nextReviewDate" type="date"></label>
+                <label class="field"><span>备注</span><input name="notes" type="text" maxlength="120" placeholder="可留空"></label>
+              </div>
+              <button class="button button-primary" type="submit">加入错题本</button>
+            </form>
+          </section>
+
+          <section class="card">
+            <div class="card-heading">
+              <div>
+                <p class="eyebrow">筛选</p>
+                <h3>缩小复习范围</h3>
+              </div>
+            </div>
+            <div class="form-stack compact-form">
+              <label class="field">
+                <span>模块</span>
+                <select id="error-module-filter">
+                  <option value="all">全部模块</option>
+                  <option value="言语理解">言语理解</option>
+                  <option value="判断推理">判断推理</option>
+                  <option value="数量关系">数量关系</option>
+                  <option value="资料分析">资料分析</option>
+                  <option value="常识判断">常识判断</option>
+                  <option value="申论">申论</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>错因</span>
+                <select id="error-cause-filter">
+                  <option value="all">全部错因</option>
+                  <option value="不会">不会</option>
+                  <option value="太慢">太慢</option>
+                  <option value="粗心">粗心</option>
+                  <option value="蒙对">蒙对</option>
+                  <option value="方法不熟">方法不熟</option>
+                </select>
+              </label>
+              <div class="filter-summary" id="error-filter-summary">共 0 条错题</div>
+            </div>
+          </section>
+        </div>
+
+        <section class="card">
+          <div class="card-heading">
+            <div>
+              <p class="eyebrow">复习队列</p>
+              <h3>按到期时间排序</h3>
+            </div>
+          </div>
+          <div id="error-list" class="error-list"></div>
+        </section>
+      </section>
+
+      <section class="tab-panel" id="tab-jobs" data-tab-panel="jobs" role="tabpanel" hidden>
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">备考之外的第二条线</p>
+            <h2>岗位准备与候选池</h2>
+            <p>专业目录与岗位限制必须以当年官方文件为准，这里只保存候选和核验结果。</p>
+          </div>
+        </div>
+
+        <div class="content-grid content-grid-jobs">
+          <section class="card notice-card">
+            <div class="card-heading">
+              <div>
+                <p class="eyebrow">专业提示</p>
+                <h3>交通设备与控制工程</h3>
+              </div>
+            </div>
+            <p class="notice-text">通常属于工学、交通运输相关类别，但国考职位表、江苏省考专业参考目录和招录单位审核口径可能不同。不要只按经验判断。</p>
+            <ul class="check-list">
+              <li>下载并保存当年国考职位表、江苏省考职位表和专业参考目录。</li>
+              <li>同时用专业名称、专业代码和上位专业类别筛选。</li>
+              <li>核验学历、学位、政治面貌、户籍、基层经历和备注栏。</li>
+              <li>保存冲刺、匹配、保守三档岗位，并记录报名截止日期。</li>
+              <li>遇到专业分类争议，以招录单位答复为准。</li>
+            </ul>
+          </section>
+
+          <section class="card">
+            <div class="card-heading">
+              <div>
+                <p class="eyebrow">候选池</p>
+                <h3>新增候选岗位</h3>
+              </div>
+            </div>
+            <form id="job-form" class="form-stack">
+              <div class="form-row">
+                <label class="field">
+                  <span>考试类型</span>
+                  <select name="examType" required>
+                    <option value="国考">国考</option>
+                    <option value="江苏省考">江苏省考</option>
+                  </select>
+                </label>
+                <label class="field"><span>部门 / 职位</span><input name="title" type="text" maxlength="100" required placeholder="例如：某铁路公安岗位"></label>
+              </div>
+              <div class="form-row form-row-three">
+                <label class="field"><span>地区</span><input name="region" type="text" maxlength="60" required placeholder="例如：南京"></label>
+                <label class="field"><span>专业要求</span><input name="majorRequirement" type="text" maxlength="100" placeholder="例如：交通运输类"></label>
+                <label class="field"><span>报名截止</span><input name="deadline" type="date"></label>
+              </div>
+              <div class="form-row">
+                <label class="field">
+                  <span>状态</span>
+                  <select name="status">
+                    <option value="待核验">待核验</option>
+                    <option value="可报">可报</option>
+                    <option value="优先">优先</option>
+                    <option value="放弃">放弃</option>
+                    <option value="已报名">已报名</option>
+                  </select>
+                </label>
+                <label class="field"><span>备注</span><input name="notes" type="text" maxlength="120" placeholder="核验结果、竞争比、是否限应届"></label>
+              </div>
+              <button class="button button-primary" type="submit">保存候选岗位</button>
+            </form>
+          </section>
+        </div>
+
+        <section class="card">
+          <div class="card-heading">
+            <div>
+              <p class="eyebrow">核验清单</p>
+              <h3>候选岗位列表</h3>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>考试</th>
+                  <th>职位</th>
+                  <th>地区</th>
+                  <th>专业要求</th>
+                  <th>截止日期</th>
+                  <th>状态</th>
+                  <th>备注</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="job-table-body"></tbody>
+            </table>
+          </div>
+          <div class="empty-state" id="job-table-empty">还没有候选岗位。</div>
+        </section>
+      </section>
+
+      <section class="tab-panel" id="tab-settings" data-tab-panel="settings" role="tabpanel" hidden>
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">基础参数</p>
+            <h2>目标、日期与数据</h2>
+            <p>修改日期和分数后，总览与计划会立即重新计算。</p>
+          </div>
+        </div>
+
+        <div class="content-grid content-grid-settings">
+          <section class="card">
+            <div class="card-heading">
+              <div>
+                <p class="eyebrow">考试参数</p>
+                <h3>设置备考目标</h3>
+              </div>
+            </div>
+            <form id="settings-form" class="form-stack">
+              <div class="form-row">
+                <label class="field"><span>国考笔试日期</span><input name="nationalExamDate" type="date" required></label>
+                <label class="field"><span>江苏省考笔试日期</span><input name="jiangsuExamDate" type="date" required></label>
+              </div>
+              <div class="form-row form-row-three">
+                <label class="field"><span>国考报名开始</span><input name="nationalRegistrationStart" type="date" required></label>
+                <label class="field"><span>国考报名截止</span><input name="nationalRegistrationEnd" type="date" required></label>
+                <label class="field"><span>江苏省考报名开始</span><input name="jiangsuRegistrationStart" type="date" required></label>
+              </div>
+              <label class="field"><span>江苏省考报名截止（暂未公布可留空）</span><input name="jiangsuRegistrationEnd" type="date"></label>
+              <label class="check-field">
+                <input name="datesAreEstimated" type="checkbox">
+                <span>以上日期仍为预计日期，请显示“预计”标签</span>
+              </label>
+              <div class="form-row form-row-three">
+                <label class="field"><span>当前行测基线</span><input name="baselineScore" type="number" min="0" max="100" step="0.1" required></label>
+                <label class="field"><span>目标行测分数</span><input name="targetScore" type="number" min="0" max="100" step="0.1" required></label>
+                <label class="field"><span>每天计划小时</span><input name="dailyHours" type="number" min="1" max="16" step="0.5" required></label>
+              </div>
+              <div class="form-row form-row-three">
+                <label class="field"><span>每周学习天数</span><input name="studyDaysPerWeek" type="number" min="1" max="7" step="1" required></label>
+                <label class="field"><span>地区</span><input name="region" type="text" maxlength="40" required></label>
+                <label class="field"><span>学历</span><input name="degree" type="text" maxlength="40" required></label>
+              </div>
+              <div class="form-row">
+                <label class="field"><span>专业</span><input name="major" type="text" maxlength="80" required></label>
+                <label class="field"><span>计划开始日期</span><input name="startDate" type="date" required></label>
+              </div>
+              <button class="button button-primary" type="submit">保存设置</button>
+            </form>
+          </section>
+
+          <aside class="side-stack">
+            <section class="card mobile-access-card">
+              <div class="card-heading">
+                <div>
+                  <p class="eyebrow">多设备共享</p>
+                  <h3>手机和平板访问</h3>
+                </div>
+              </div>
+              <div id="mobile-access-status" class="mobile-access-status"></div>
+            </section>
+
+            <section class="card">
+              <div class="card-heading">
+                <div>
+                  <p class="eyebrow">数据安全</p>
+                  <h3>备份与恢复</h3>
+                </div>
+              </div>
+              <p class="notice-text">数据会保存在本机服务，同时在浏览器保留一份副本。仍建议每周导出一次 JSON 备份。</p>
+              <div class="stacked-actions">
+                <button class="button button-primary" type="button" data-action="export-data">导出全部数据</button>
+                <label class="button button-ghost file-button">
+                  选择 JSON 导入
+                  <input id="settings-import-file" type="file" accept="application/json,.json" hidden>
+                </label>
+                <button class="button button-danger" type="button" data-action="reset-data">清空全部数据</button>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="card-heading">
+                <div>
+                  <p class="eyebrow">使用提醒</p>
+                  <h3>先完成诊断</h3>
+                </div>
+              </div>
+              <ol class="ordered-list">
+                <li>按正式时间完成一次行测和申论真题。</li>
+                <li>录入行测总分和五个模块正确率。</li>
+                <li>根据系统弱项调整下一周计划。</li>
+                <li>每周至少留下一次真实套卷记录。</li>
+              </ol>
+            </section>
+          </aside>
+        </div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <span>双考备考驾驶舱 · 本地数据版</span>
+      <span>最后保存：<strong id="last-updated">尚未保存</strong></span>
+    </footer>
+  </div>
+
+  <div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="true"></div>
+  <script src="routes.js?v=7"></script>
+  <script src="route-details.js?v=7"></script>
+  <script src="route-details-more.js?v=7"></script>
+  <script src="route-details-final.js?v=7"></script>
+  <script src="app.js?v=7"></script>
+</body>
+</html>
